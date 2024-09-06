@@ -5,6 +5,8 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['user_id', 'login_id', 'username', 'userpwd']
+        extra_kwargs = {'userpwd': {'write_only': True}}  # 비밀번호를 write-only로 설정
+
 
 
 class GoodsSerializer(serializers.ModelSerializer):
