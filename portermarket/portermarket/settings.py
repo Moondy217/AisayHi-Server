@@ -51,7 +51,7 @@ REST_FRAMEWORK = {
 
 # JWT 설정 (옵션)
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),  # 토큰 유효시간 설정
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 }
 
