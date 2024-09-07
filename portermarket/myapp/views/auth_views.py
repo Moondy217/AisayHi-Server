@@ -5,11 +5,10 @@ from django.contrib.auth.hashers import make_password
 from ..models import User
 from ..serializers import UserSerializer
 
-
 class SignupView(APIView):
     def post(self, request):
         data = request.data
-        password = data.get('password')
+        password = data.get('userpwd')  # 클라이언트가 'userpwd' 필드로 비밀번호를 전송한다고 가정
 
         # 비밀번호가 제공되지 않으면 에러 반환
         if not password:

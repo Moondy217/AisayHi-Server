@@ -53,8 +53,10 @@ from datetime import timedelta
 
 # JWT 설정 (옵션)
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),  # 토큰 유효시간 설정
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),  # 액세스 토큰의 유효 시간
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),  # 리프레시 토큰의 유효 시간
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True,
 }
 
 MIDDLEWARE = [
@@ -86,9 +88,8 @@ TEMPLATES = [
     },
 ]
 
-CORS_ALLOWED_ORIGINS = [
-    'http://localhost:5175' # vite + React
-]
+# CORS 허용 설정
+CORS_ALLOW_ALL_ORIGINS = True
 
 WSGI_APPLICATION = 'portermarket.wsgi.application'
 
