@@ -1,9 +1,12 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from django.contrib.auth import authenticate
 from django.contrib.auth.hashers import make_password
-from ..models import User
-from ..serializers import UserSerializer
+from ..serializers import LoginSerializer, UserSerializer
+from rest_framework_simplejwt.tokens import RefreshToken
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 
 class SignupView(APIView):
     def post(self, request):
@@ -43,3 +46,42 @@ class SignupView(APIView):
             },
             status=status.HTTP_400_BAD_REQUEST
         )
+
+@method_decorator(csrf_exempt, name='dispatch')
+class LoginAPIView(APIView):
+    def post(self, request, *args, **kwargs):
+        serializer = LoginSerializer(data=request.data)
+
+        if serializer.is_valid():
+            # authenticate 함수를 사용하여 사용자 인증
+            user = authenticate(
+                request=request,
+                login_id=serializer.validated_data['login_id'],
+                password=serializer.validated_data['userpwd']
+            )
+
+            if user is not None:
+                # 인증 성공
+                refresh = RefreshToken.for_user(user)
+                return Response({
+                    'status': 'success',
+                    'message': '로그인 성공',
+                    'login_id': user.login_id,
+                    'token': {
+                        'refresh': str(refresh),
+                        'access': str(refresh.access_token),
+                    }
+                }, status=status.HTTP_200_OK)
+
+            # 인증 실패 시 메시지 반환
+            return Response({
+                'status': 'fail',
+                'message': '로그인 정보가 잘못되었습니다.'
+            }, status=status.HTTP_401_UNAUTHORIZED)
+
+        # 시리얼라이저 오류 반환
+        return Response({
+            'status': 'fail',
+            'message': '유효하지 않은 요청입니다.',
+            'errors': serializer.errors
+        }, status=status.HTTP_400_BAD_REQUEST)
